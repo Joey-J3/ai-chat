@@ -11,13 +11,19 @@ import { darkTheme } from '@/styles/theme/theme'
 const THEME_MODE = 'theme-mode';
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [mode, setMode] = useState<PaletteMode>('light');
+  const [mode, setMode] = useState<PaletteMode>('light')
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
         setMode((prevMode: PaletteMode) => {
           const mode = prevMode === 'light' ? 'dark' : 'light';
-          localStorage.setItem(THEME_MODE, mode);
+
+          const bodyClasses = document.body.classList
+          mode === 'dark'
+            ? bodyClasses.add('dark')
+            : bodyClasses.remove('dark')
+          
+          localStorage.setItem(THEME_MODE, mode)
           return mode;
         });
       },
@@ -26,8 +32,8 @@ export default function App({ Component, pageProps }: AppProps) {
   );
 
   useEffect(() => {
-    setMode((localStorage.getItem(THEME_MODE) as PaletteMode) || 'light');
-  }, []);
+    setMode(localStorage.getItem(THEME_MODE) as PaletteMode || 'light')
+  }, [])
 
   const theme = useMemo(() => createTheme(mode === 'light' ? lightTheme : darkTheme), [mode]);
   return (
