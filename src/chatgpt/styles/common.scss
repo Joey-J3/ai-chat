@@ -204,26 +204,12 @@ input[type="range"]::-ms-thumb:hover {
   @include thumbHover();
 }
 
-input[type="number"],
-input[type="text"],
-input[type="password"] {
-  appearance: none;
-  border-radius: 10px;
-  border: var(--border-in-light);
-  min-height: 36px;
-  box-sizing: border-box;
-  background: var(--white);
-  color: var(--black);
-  padding: 0 10px;
-  max-width: 50%;
-}
-
 div.math {
   overflow-x: auto;
 }
 
 .modal-mask {
-  z-index: 9999;
+  z-index: 999;
   position: fixed;
   top: 0;
   left: 0;

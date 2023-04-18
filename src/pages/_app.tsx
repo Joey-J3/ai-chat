@@ -32,7 +32,12 @@ export default function App({ Component, pageProps }: AppProps) {
   );
 
   useEffect(() => {
-    setMode(localStorage.getItem(THEME_MODE) as PaletteMode || 'light')
+    const mode = localStorage.getItem(THEME_MODE) as PaletteMode || 'light'
+    const bodyClasses = document.body.classList
+      mode === 'dark'
+        ? bodyClasses.add('dark')
+        : bodyClasses.remove('dark')
+    setMode(mode)
   }, [])
 
   const theme = useMemo(() => createTheme(mode === 'light' ? lightTheme : darkTheme), [mode]);

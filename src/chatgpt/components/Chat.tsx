@@ -1,7 +1,10 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import { useDebouncedCallback } from 'use-debounce';
+import clsx from 'clsx';
 
-import { CircularProgress, IconButton } from '@mui/material';
+import { CircularProgress, IconButton, TextareaAutosize } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import {
   Download,
   ContentCopyOutlined,
@@ -16,9 +19,9 @@ import { Prompt, usePromptStore } from '../store/prompt';
 import { copyToClipboard, downloadAs, isMobileScreen, selectOrCopy, autoGrowTextArea } from '../utils';
 import { useScrollToBottom, useSubmitHandler } from '../hooks';
 
-import { PromptHints } from './ui-lib';
+// import { PromptHints } from './ui-lib';
 import Avatar from './Avatar';
-import PromptToast from './PromptToast';
+// import PromptToast from './PromptToast';
 import { ControllerPool } from '../requests';
 import Locale from '../locales';
 import styles from './home.module.scss';
@@ -26,7 +29,15 @@ import { showModal } from './Modal';
 import { useIsClient, useVisibilityInClient } from '@/utils/hooks';
 import MouseOverPopover from '@/components/PopoverOnHover';
 
-// const Markdown = dynamic<{ markdownInput: string }>(() => import('main/markdown'), { suspense: false });
+const PromptToast = dynamic(async () => (await import('./PromptToast')).default, {
+  loading: () => <CircularProgress />,
+})
+
+const PromptHints = dynamic(async () => ((await import('./ui-lib')).PromptHints), {
+  loading: () => <CircularProgress />,
+})
+
+const Markdown = dynamic<{ markdownInput: string }>(() => import('main/markdown'), { suspense: false });
 
 function exportMessages(messages: Message[], topic: string) {
   const mdText =
@@ -49,12 +60,12 @@ function exportMessages(messages: Message[], topic: string) {
     ),
     actions: [
       <MouseOverPopover content={Locale.Export.Copy}>
-        <IconButton aria-label="copy" onClick={() => copyToClipboard(mdText)}>
+        <IconButton color="inherit" aria-label="copy" onClick={() => copyToClipboard(mdText)}>
           <ContentCopyOutlined />
         </IconButton>
       </MouseOverPopover>,
       <MouseOverPopover content={Locale.Export.Download}>
-        <IconButton aria-label="download" onClick={() => downloadAs(mdText, filename)}>
+        <IconButton color="inherit" aria-label="download" onClick={() => downloadAs(mdText, filename)}>
           <Download />
         </IconButton>
       </MouseOverPopover>,
@@ -78,6 +89,7 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
   const [hitBottom, setHitBottom] = useState(false);
   const isClient = useIsClient();
   const visibility = useVisibilityInClient();
+  const theme = useTheme();
 
   const onChatBodyScroll = (e: HTMLElement) => {
     const isTouchBottom = e.scrollTop + e.clientHeight >= e.scrollHeight - 20;
@@ -248,7 +260,7 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
   }, []);
 
   return (
-    <div className={styles.chat} key={session.id}>
+    <div className={clsx(styles.chat, theme.palette.mode === 'dark' ? ' bg-slate-800' : 'white')} key={session.id}>
       <div className={styles['window-header']}>
         <div className={styles['window-header-title']}>
           <div
@@ -262,26 +274,26 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
           >
             {session.topic}
           </div>
-          <div className={styles['window-header-sub-title']}>{Locale.Chat.SubTitle(session.messages.length)}</div>
+          <div className={styles['window-header-sub-title']}>{Locale.Chat.SubTitle(isClient ? session.messages.length : 0)}</div>
         </div>
         <div className={styles['window-actions']}>
           <div className={styles['window-action-button'] + ' ' + styles.mobile}>
             <MouseOverPopover content={Locale.Chat.Actions.ChatList}>
-              <IconButton aria-label="return" onClick={props?.showSideBar}>
+              <IconButton color="inherit" aria-label="return" onClick={props?.showSideBar}>
                 <KeyboardReturnOutlined />
               </IconButton>
             </MouseOverPopover>
           </div>
           <div className={styles['window-action-button']}>
             <MouseOverPopover content={Locale.Chat.Actions.CompressedHistory}>
-              <IconButton aria-label="brain" onClick={() => setShowPromptModal(true)}>
+              <IconButton color="inherit" aria-label="brain" onClick={() => setShowPromptModal(true)}>
                 <Psychology />
               </IconButton>
             </MouseOverPopover>
           </div>
           <div className={styles['window-action-button']}>
             <MouseOverPopover content={Locale.Chat.Actions.Export}>
-              <IconButton
+              <IconButton color="inherit"
                 aria-label="brain"
                 onClick={() =>
                   exportMessages(
@@ -296,7 +308,9 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
           </div>
         </div>
 
-        <PromptToast showToast={!hitBottom} showModal={showPromptModal} setShowModal={setShowPromptModal} />
+        <Suspense fallback={<CircularProgress />}>
+          <PromptToast showToast={!hitBottom} showModal={showPromptModal} setShowModal={setShowPromptModal} />
+        </Suspense>
       </div>
 
       <div
@@ -309,7 +323,7 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
           setAutoScroll(false);
         }}
       >
-        {messages.map((message, i) => {
+        {isClient && messages.map((message, i) => {
           const isUser = message.role === 'user';
 
           return (
@@ -354,10 +368,9 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
                         setUserInput(message.content);
                       }}
                     >
-                      {/* <Suspense fallback={<CircularProgress />}>
-                          <Markdown markdownInput={message.content} />
-                        </Suspense> */}
-                      {message.content}
+                      <Suspense fallback={<CircularProgress />}>
+                        <Markdown markdownInput={message.content} />
+                      </Suspense>
                     </div>
                   )}
                 </div>
@@ -377,7 +390,7 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
       <div className={styles['chat-input-panel']}>
         <PromptHints prompts={promptHints} onPromptSelect={onPromptSelect} />
         <div className={styles['chat-input-panel-inner']}>
-          <textarea
+          <TextareaAutosize
             ref={inputRef}
             className={styles['chat-input']}
             placeholder={Locale.Chat.Input(submitKey)}
@@ -390,10 +403,11 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
               setTimeout(() => setPromptHints([]), 500);
             }}
             autoFocus={!props?.sideBarShowing}
-            rows={inputRows}
+            minRows={inputRows}
+            maxRows={inputRows}
           />
           <MouseOverPopover content={Locale.Chat.Send}>
-            <IconButton aria-label="send" onClick={onUserSubmit} className={styles['chat-input-send']}>
+            <IconButton color="inherit" aria-label="send" onClick={onUserSubmit} className={styles['chat-input-send']}>
               <SendRounded />
             </IconButton>
           </MouseOverPopover>

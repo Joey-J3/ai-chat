@@ -1,6 +1,5 @@
-import { Close } from "@mui/icons-material";
 import { createRoot } from "react-dom/client";
-import styles from './modal.module.scss'
+import { Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 
 interface ModalProps {
   title: string;
@@ -9,29 +8,17 @@ interface ModalProps {
   onClose?: () => void;
 }
 
-export default function Modal(props: ModalProps) {
+export default function Modal({ title, children, actions, onClose }: ModalProps) {
   return (
-    <div className={styles["modal-container"]}>
-      <div className={styles["modal-header"]}>
-        <div className={styles["modal-title"]}>{props.title}</div>
-
-        <div className={styles["modal-close-btn"]} onClick={props.onClose}>
-          <Close />
-        </div>
-      </div>
-
-      <div className={styles["modal-content"]}>{props.children}</div>
-
-      <div className={styles["modal-footer"]}>
-        <div className={styles["modal-actions"]}>
-          {props.actions?.map((action, i) => (
-            <div key={i} className={styles["modal-action"]}>
-              {action}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+    <Dialog open={true} onClose={onClose}>
+      <DialogTitle>{title}</DialogTitle>
+      <DialogContent>{children}</DialogContent>
+      <DialogActions>
+        {actions?.map((action, index) => <div key={index}>
+          {action}
+        </div>)}
+      </DialogActions>
+    </Dialog>
   );
 }
 

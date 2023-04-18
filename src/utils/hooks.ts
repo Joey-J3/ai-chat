@@ -16,32 +16,8 @@ export function useVisibilityInClient(): CSSProperties {
 }
 
 
-/**
- * 计算1 - 100 质数和
- */
-function sum() {
-  let res = 0
-  let count = 0;
-  let i = 1
-  while(count <= 100) {
-    // 1. 判断是否是质数
-    if (isDummyNum(i)) {
-      res += i
-      count++;
-    }
-    i++;
-  }
-  return res
-}
-
-/**
- * 判断是否是质数
- */
-const isDummyNum = (num: number) => {
-  for (let i = 2; i < num; i++) {
-    if (num % i === 0) {
-      return false
-    }
-  }
-  return true;
+export const useModal = (initialMode = false) => {   
+  const [modalOpen, setModalOpen] = useState(initialMode)   
+  const toggle = () => setModalOpen(!modalOpen)   
+  return [modalOpen, setModalOpen, toggle] 
 }
