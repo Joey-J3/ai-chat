@@ -1,4 +1,3 @@
-import openAI from '@/utils/openAI'
 import { ChatCompletionResponseMessage, CreateChatCompletionRequest, Configuration, OpenAIApi } from 'openai'
 
 // break the app if the API key is missing

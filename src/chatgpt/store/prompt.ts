@@ -84,7 +84,7 @@ export const usePromptStore = create<PromptStore>()(
         if (text.length === 0) {
           // return all prompts
           const userPrompts = get().prompts?.values?.() ?? [];
-          return SearchService.allBuiltInPrompts.concat([...userPrompts]);
+          return SearchService.allBuiltInPrompts.concat([...Array.from(userPrompts)]);
         }
         return SearchService.search(text) as Prompt[];
       },
@@ -114,7 +114,7 @@ export const usePromptStore = create<PromptStore>()(
                     } as Prompt),
                 );
               })
-              .concat([...(state?.prompts?.values() ?? [])]);
+              .concat([...(Array.from(state?.prompts?.values() ?? []))]);
 
             const allPromptsForSearch = builtinPrompts.reduce(
               (pre, cur) => pre.concat(cur),

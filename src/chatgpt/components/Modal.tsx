@@ -14,9 +14,7 @@ export default function Modal({ title, children, actions, onClose }: ModalProps)
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>{children}</DialogContent>
       <DialogActions>
-        {actions?.map((action, index) => <div key={index}>
-          {action}
-        </div>)}
+        {actions}
       </DialogActions>
     </Dialog>
   );
