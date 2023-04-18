@@ -59,12 +59,12 @@ function exportMessages(messages: Message[], topic: string) {
       </div>
     ),
     actions: [
-      <MouseOverPopover content={Locale.Export.Copy}>
+      <MouseOverPopover content={Locale.Export.Copy} key={1}>
         <IconButton color="inherit" aria-label="copy" onClick={() => copyToClipboard(mdText)}>
           <ContentCopyOutlined />
         </IconButton>
       </MouseOverPopover>,
-      <MouseOverPopover content={Locale.Export.Download}>
+      <MouseOverPopover content={Locale.Export.Download} key={2}>
         <IconButton color="inherit" aria-label="download" onClick={() => downloadAs(mdText, filename)}>
           <Download />
         </IconButton>
@@ -391,7 +391,7 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
         <PromptHints prompts={promptHints} onPromptSelect={onPromptSelect} />
         <div className={styles['chat-input-panel-inner']}>
           <TextareaAutosize
-            ref={inputRef}
+            // ref={inputRef}
             className={styles['chat-input']}
             placeholder={Locale.Chat.Input(submitKey)}
             onInput={(e) => onInput(e.currentTarget.value)}

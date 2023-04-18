@@ -30,7 +30,7 @@
     "zustand": "^4.3.7"
   },
   "devDependencies": {
-    "@module-federation/nextjs-mf": "^6.2.3",
+    "@module-federation/nextjs-mf": "^6.3.1",
     "autoprefixer": "^10.4.14",
     "babel-plugin-import": "^1.13.6",
     "babel-plugin-superjson-next": "^0.4.5",
