@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import { useDebouncedCallback } from 'use-debounce';
 import clsx from 'clsx';
 
-import { CircularProgress, IconButton, TextareaAutosize } from '@mui/material';
+import { CircularProgress, IconButton, SwipeableDrawer, TextareaAutosize, Tooltip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import {
   Download,
@@ -12,6 +12,7 @@ import {
   Psychology,
   FileDownloadDoneRounded,
   SendRounded,
+  Settings as SettingsIcon,
 } from '@mui/icons-material';
 
 import { Message, useChatStore, BOT_HELLO, createMessage } from '../store';
@@ -28,6 +29,7 @@ import styles from './home.module.scss';
 import { showModal } from './Modal';
 import { useIsClient, useVisibilityInClient } from '@/utils/hooks';
 import MouseOverPopover from '@/components/PopoverOnHover';
+import Settings from './Setting';
 
 const PromptToast = dynamic(async () => (await import('./PromptToast')).default, {
   loading: () => <CircularProgress />,
@@ -81,12 +83,14 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
   const fontSize = useChatStore((state) => state.config.fontSize);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const chatRef = useRef<HTMLDivElement>(null)
   const [userInput, setUserInput] = useState('');
   const [beforeInput, setBeforeInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { submitKey, shouldSubmit } = useSubmitHandler();
   const { scrollRef, setAutoScroll } = useScrollToBottom();
   const [hitBottom, setHitBottom] = useState(false);
+  const [showSetting, setShowSetting] = useState(false);
   const isClient = useIsClient();
   const visibility = useVisibilityInClient();
   const theme = useTheme();
@@ -260,7 +264,7 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
   }, []);
 
   return (
-    <div className={clsx(styles.chat, theme.palette.mode === 'dark' ? ' bg-slate-800' : 'white')} key={session.id}>
+    <div className={clsx(styles.chat, theme.palette.mode === 'dark' ? ' bg-slate-800' : 'white')} ref={chatRef} key={session.id}>
       <div className={styles['window-header']}>
         <div className={styles['window-header-title']}>
           <div
@@ -305,6 +309,16 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
                 <FileDownloadDoneRounded />
               </IconButton>
             </MouseOverPopover>
+          </div>
+          <div className={styles['window-action-button']}>
+          <Tooltip title={Locale.Settings.Title}>
+            <IconButton color="inherit"
+                aria-label="setting"
+                onClick={() => setShowSetting(true)}
+              >
+              <SettingsIcon />
+            </IconButton>
+          </Tooltip>
           </div>
         </div>
 
@@ -413,6 +427,21 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
           </MouseOverPopover>
         </div>
       </div>
+
+      <SwipeableDrawer
+        anchor="right"
+        open={showSetting}
+        onClose={() => setShowSetting(false)}
+        onOpen={() => setShowSetting(true)}
+        // swipeAreaWidth={drawerBleeding}
+        // disableSwipeToOpen={false}
+        ModalProps={{
+          keepMounted: true,
+          container: chatRef.current
+        }}
+      >
+        <Settings closeSettings={() => setShowSetting(false)} />
+      </SwipeableDrawer>
     </div>
   );
 }
