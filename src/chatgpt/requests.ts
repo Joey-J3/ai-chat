@@ -1,4 +1,4 @@
-import type { ChatRequest, ChatReponse } from "../pages/api/openai/typing";
+import type { ChatRequest, ChatReponse } from "../pages/api/chat/openai/typing";
 import { showToast } from "./components/Toast";
 import { Message, ModelConfig, useAccessStore, useChatStore } from "./store";
 
@@ -50,7 +50,7 @@ function getHeaders() {
 
 export function requestOpenaiClient(path: string) {
   return (body: any, method = "POST") =>
-    fetch("/api/openai?_vercel_no_cache=1", {
+    fetch(`/chat/openai?_vercel_no_cache=1`, {
       method,
       headers: {
         "Content-Type": "application/json",
@@ -141,7 +141,7 @@ export async function requestChatStream(
   const reqTimeoutId = setTimeout(() => controller.abort(), TIME_OUT_MS);
 
   try {
-    const res = await fetch("/api/chat-stream", {
+    const res = await fetch(`/chat/chat-stream`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
