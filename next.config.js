@@ -62,6 +62,14 @@ const nextConfig = {
 
     return config;
   },
+  async rewrites() {
+    return [
+      {
+        source: '/chat/:path*',
+        destination: `${chatGPTAppUrl}/api/chat/:path*`,
+      },
+    ]
+  },
   async headers() {
     return [
       {
