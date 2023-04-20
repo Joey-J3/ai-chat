@@ -1,6 +1,6 @@
 import { createParser } from "eventsource-parser";
 import { NextRequest } from "next/server";
-import { requestOpenai } from "../common";
+import { requestOpenai } from "./common";
 
 async function createStream(req: NextRequest) {
   const encoder = new TextEncoder();
@@ -47,7 +47,7 @@ async function createStream(req: NextRequest) {
   return stream;
 }
 
-export async function POST(req: NextRequest) {
+export default async function POST(req: NextRequest) {
   try {
     const stream = await createStream(req);
     return new Response(stream);
