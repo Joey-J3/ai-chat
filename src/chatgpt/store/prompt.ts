@@ -93,36 +93,36 @@ export const usePromptStore = create<PromptStore>()(
       name: PROMPT_KEY,
       version: 1,
       onRehydrateStorage(state) {
-        const PROMPT_URL = "./prompts.json";
+        // const PROMPT_URL = "./prompts.json";
 
-        type PromptList = Array<[string, string]>;
+        // type PromptList = Array<[string, string]>;
 
-        fetch(PROMPT_URL)
-          .then((res) => res.json())
-          .then((res) => {
-            let fetchPrompts = [res.en, res.cn];
-            if (getLang() === "cn") {
-              fetchPrompts = fetchPrompts.reverse();
-            }
-            const builtinPrompts = fetchPrompts
-              .map((promptList: PromptList) => {
-                return promptList.map(
-                  ([title, content]) =>
-                    ({
-                      title,
-                      content,
-                    } as Prompt),
-                );
-              })
-              .concat([...(Array.from(state?.prompts?.values() ?? []))]);
+        // fetch(PROMPT_URL)
+        //   .then((res) => res.json())
+        //   .then((res) => {
+        //     let fetchPrompts = [res.en, res.cn];
+        //     if (getLang() === "cn") {
+        //       fetchPrompts = fetchPrompts.reverse();
+        //     }
+        //     const builtinPrompts = fetchPrompts
+        //       .map((promptList: PromptList) => {
+        //         return promptList.map(
+        //           ([title, content]) =>
+        //             ({
+        //               title,
+        //               content,
+        //             } as Prompt),
+        //         );
+        //       })
+        //       .concat([...(Array.from(state?.prompts?.values() ?? []))]);
 
-            const allPromptsForSearch = builtinPrompts.reduce(
-              (pre, cur) => pre.concat(cur),
-              [],
-            );
-            SearchService.count.builtin = res.en.length + res.cn.length;
-            SearchService.init(allPromptsForSearch);
-          });
+        //     const allPromptsForSearch = builtinPrompts.reduce(
+        //       (pre, cur) => pre.concat(cur),
+        //       [],
+        //     );
+        //     SearchService.count.builtin = res.en.length + res.cn.length;
+        //     SearchService.init(allPromptsForSearch);
+        //   });
       },
     },
   ),
