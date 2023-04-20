@@ -26,11 +26,13 @@
     "react-cookie": "^4.1.1",
     "react-dom": "18.2.0",
     "react-wrap-balancer": "^0.4.0",
+    "spark-md5": "^3.0.2",
     "use-debounce": "^9.0.4",
     "zustand": "^4.3.7"
   },
   "devDependencies": {
     "@module-federation/nextjs-mf": "^6.3.1",
+    "@types/spark-md5": "^3.0.2",
     "autoprefixer": "^10.4.14",
     "babel-plugin-import": "^1.13.6",
     "babel-plugin-superjson-next": "^0.4.5",
