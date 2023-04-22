@@ -2,6 +2,7 @@ const { NextFederationPlugin } = require('@module-federation/nextjs-mf');
 
 const mainAppUrl = process.env.MAIN_APP_URL
 const chatGPTAppUrl = process.env.CHAT_GPT_APP_URL
+const chatGPTAppHref = process.env.CHAT_GPT_APP_HREF
 
 const remotes = isServer => {
   const location = isServer ? 'ssr' : 'chunks';
@@ -66,7 +67,7 @@ const nextConfig = {
     return [
       {
         source: '/chat/:path*',
-        destination: `${chatGPTAppUrl}/api/chat/:path*`,
+        destination: `${chatGPTAppHref}/api/chat/:path*`,
       },
     ]
   },
@@ -78,7 +79,7 @@ const nextConfig = {
           { key: "Access-Control-Allow-Credentials", value: "true" },
           { key: "Access-Control-Allow-Origin", value: "*" },
           { key: "Access-Control-Allow-Methods", value: "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
-          { key: "Access-Control-Allow-Headers", value: "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, path, token" },
+          { key: "Access-Control-Allow-Headers", value: "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, path, token, access-code" },
         ]
       }
     ]

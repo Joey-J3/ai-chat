@@ -1,4 +1,4 @@
-import type { ChatRequest, ChatReponse } from "../pages/api/chat/openai/typing";
+import type { ChatRequest, ChatReponse } from "../pages/api/chat/openai";
 import { showToast } from "./components/Toast";
 import { Message, ModelConfig, useAccessStore, useChatStore } from "./store";
 
@@ -65,7 +65,7 @@ export async function requestChat(messages: Message[]) {
   const req: ChatRequest = makeRequestParam(messages, { filterBot: true });
 
   const res = await requestOpenaiClient("v1/chat/completions")(req);
-
+  
   try {
     const response = (await res.json()) as ChatReponse;
     return response;

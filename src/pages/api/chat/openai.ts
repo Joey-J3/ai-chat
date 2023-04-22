@@ -1,5 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requestOpenai } from "../../common";
+import { requestOpenai } from "../common";
+
+import type {
+  CreateChatCompletionRequest,
+  CreateChatCompletionResponse,
+} from "openai";
+
+export type ChatRequest = CreateChatCompletionRequest;
+export type ChatReponse = CreateChatCompletionResponse;
+
 
 async function makeRequest(req: NextRequest) {
   try {
@@ -22,10 +31,10 @@ async function makeRequest(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
-  return makeRequest(req);
+export default async function handler(req: NextRequest) {
+  return makeRequest(req)
 }
 
-export async function GET(req: NextRequest) {
-  return makeRequest(req);
+export const config = {
+  runtime: 'edge',
 }
