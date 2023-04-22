@@ -3,7 +3,15 @@ import dynamic from 'next/dynamic';
 import { useDebouncedCallback } from 'use-debounce';
 import clsx from 'clsx';
 
-import { CircularProgress, IconButton, SwipeableDrawer, TextareaAutosize, Tooltip } from '@mui/material';
+import {
+  Box,
+  CircularProgress,
+  IconButton,
+  SwipeableDrawer,
+  TextareaAutosize,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import {
   Download,
@@ -33,11 +41,11 @@ import Settings from './Setting';
 
 const PromptToast = dynamic(async () => (await import('./PromptToast')).default, {
   loading: () => <CircularProgress />,
-})
+});
 
-const PromptHints = dynamic(async () => ((await import('./ui-lib')).PromptHints), {
+const PromptHints = dynamic(async () => (await import('./ui-lib')).PromptHints, {
   loading: () => <CircularProgress />,
-})
+});
 
 const Markdown = dynamic<{ markdownInput: string }>(() => import('main/markdown'), { suspense: false });
 
@@ -83,7 +91,7 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
   const fontSize = useChatStore((state) => state.config.fontSize);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const chatRef = useRef<HTMLDivElement>(null)
+  const chatRef = useRef<HTMLDivElement>(null);
   const [userInput, setUserInput] = useState('');
   const [beforeInput, setBeforeInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -264,7 +272,11 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
   }, []);
 
   return (
-    <div className={clsx(styles.chat, theme.palette.mode === 'dark' ? ' bg-slate-800' : 'white')} ref={chatRef} key={session.id}>
+    <div
+      className={clsx(styles.chat, theme.palette.mode === 'dark' ? ' bg-slate-800' : 'white')}
+      ref={chatRef}
+      key={session.id}
+    >
       <div className={styles['window-header']}>
         <div className={styles['window-header-title']}>
           <div
@@ -278,7 +290,9 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
           >
             {session.topic}
           </div>
-          <div className={styles['window-header-sub-title']}>{Locale.Chat.SubTitle(isClient ? session.messages.length : 0)}</div>
+          <div className={styles['window-header-sub-title']}>
+            {Locale.Chat.SubTitle(isClient ? session.messages.length : 0)}
+          </div>
         </div>
         <div className={styles['window-actions']}>
           <div className={styles['window-action-button'] + ' ' + styles.mobile}>
@@ -297,7 +311,8 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
           </div>
           <div className={styles['window-action-button']}>
             <MouseOverPopover content={Locale.Chat.Actions.Export}>
-              <IconButton color="inherit"
+              <IconButton
+                color="inherit"
                 aria-label="brain"
                 onClick={() =>
                   exportMessages(
@@ -311,14 +326,11 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
             </MouseOverPopover>
           </div>
           <div className={styles['window-action-button']}>
-          <Tooltip title={Locale.Settings.Title}>
-            <IconButton color="inherit"
-                aria-label="setting"
-                onClick={() => setShowSetting(true)}
-              >
-              <SettingsIcon />
-            </IconButton>
-          </Tooltip>
+            <Tooltip title={Locale.Settings.Title}>
+              <IconButton color="inherit" aria-label="setting" onClick={() => setShowSetting(true)}>
+                <SettingsIcon />
+              </IconButton>
+            </Tooltip>
           </div>
         </div>
 
@@ -337,68 +349,100 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
           setAutoScroll(false);
         }}
       >
-        {isClient && messages.map((message, i) => {
-          const isUser = message.role === 'user';
+        {isClient &&
+          messages.map((message, i) => {
+            const isUser = message.role === 'user';
 
-          return (
-            <div key={i} className={isUser ? styles['chat-message-user'] : styles['chat-message']}>
-              <div className={styles['chat-message-container']}>
-                <div className={styles['chat-message-avatar']}>
-                  <Avatar role={message.role} />
-                </div>
-                {(message.preview || message.streaming) && (
-                  <div className={styles['chat-message-status']}>{Locale.Chat.Typing}</div>
-                )}
-                <div className={styles['chat-message-item']}>
-                  {!isUser && !(message.preview || message.content.length === 0) && (
-                    <div className={styles['chat-message-top-actions']}>
-                      {message.streaming ? (
-                        <div className={styles['chat-message-top-action']} onClick={() => onUserStop(message.id ?? i)}>
-                          {Locale.Chat.Actions.Stop}
-                        </div>
-                      ) : (
-                        <div className={styles['chat-message-top-action']} onClick={() => onResend(i)}>
-                          {Locale.Chat.Actions.Retry}
-                        </div>
-                      )}
+            return (
+              <div key={i} className={isUser ? styles['chat-message-user'] : styles['chat-message']}>
+                <div className={styles['chat-message-container']}>
+                  <div className={styles['chat-message-avatar']}>
+                    <Avatar role={message.role} />
+                  </div>
+                  {(message.preview || message.streaming) && (
+                    <div className={styles['chat-message-status']}>{Locale.Chat.Typing}</div>
+                  )}
+                  <Box
+                    sx={(theme) => ({
+                      boxSizing: 'border-box',
+                      maxWidth: '100%',
+                      marginTop: theme.spacing(),
+                      borderRadius: '10px',
+                      backgroundColor: isUser ? theme.palette.grey[50] : theme.palette.background.default,
+                      // background-color: rgba(0, 0, 0, 0.05);
+                      padding: '10px',
+                      fontSize: 14,
+                      userSelect: 'text',
+                      wordBreak: 'break-word',
+                      border: '1px solid grey',
+                      position: 'relative',
+                      color: theme.palette.text.primary,
+                    })}
+                  >
+                    {!isUser && !(message.preview || message.content.length === 0) && (
+                      <div className={styles['chat-message-top-actions']}>
+                        {message.streaming ? (
+                          <Typography
+                            className={styles['chat-message-top-action']}
+                            sx={{
+                              color: 'gray',
+                            }}
+                            onClick={() => onUserStop(message.id ?? i)}
+                          >
+                            {Locale.Chat.Actions.Stop}
+                          </Typography>
+                        ) : (
+                          <Typography
+                            className={styles['chat-message-top-action']}
+                            sx={{
+                              color: 'gray',
+                            }}
+                            onClick={() => onResend(i)}
+                          >
+                            {Locale.Chat.Actions.Retry}
+                          </Typography>
+                        )}
 
+                        <Typography
+                          className={styles['chat-message-top-action']}
+                          sx={{
+                            color: 'gray',
+                          }}
+                          onClick={() => copyToClipboard(message.content)}
+                        >
+                          {Locale.Chat.Actions.Copy}
+                        </Typography>
+                      </div>
+                    )}
+                    {(message.preview || message.content.length === 0) && !isUser ? (
+                      <CircularProgress />
+                    ) : (
                       <div
-                        className={styles['chat-message-top-action']}
-                        onClick={() => copyToClipboard(message.content)}
+                        className="markdown-body"
+                        style={{ fontSize: `${fontSize}px` }}
+                        onContextMenu={(e) => onRightClick(e, message)}
+                        onDoubleClickCapture={() => {
+                          if (!isMobileScreen()) return;
+                          setUserInput(message.content);
+                        }}
                       >
-                        {Locale.Chat.Actions.Copy}
+                        <Suspense fallback={<CircularProgress />}>
+                          <Markdown markdownInput={message.content} />
+                        </Suspense>
+                      </div>
+                    )}
+                  </Box>
+                  {!isUser && !message.preview && (
+                    <div className={styles['chat-message-actions']}>
+                      <div className={styles['chat-message-action-date']} style={visibility}>
+                        {message.date.toLocaleString()}
                       </div>
                     </div>
                   )}
-                  {(message.preview || message.content.length === 0) && !isUser ? (
-                    <CircularProgress />
-                  ) : (
-                    <div
-                      className="markdown-body"
-                      style={{ fontSize: `${fontSize}px` }}
-                      onContextMenu={(e) => onRightClick(e, message)}
-                      onDoubleClickCapture={() => {
-                        if (!isMobileScreen()) return;
-                        setUserInput(message.content);
-                      }}
-                    >
-                      <Suspense fallback={<CircularProgress />}>
-                        <Markdown markdownInput={message.content} />
-                      </Suspense>
-                    </div>
-                  )}
                 </div>
-                {!isUser && !message.preview && (
-                  <div className={styles['chat-message-actions']}>
-                    <div className={styles['chat-message-action-date']} style={visibility}>
-                      {message.date.toLocaleString()}
-                    </div>
-                  </div>
-                )}
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
 
       <div className={styles['chat-input-panel']}>
@@ -437,7 +481,7 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
         // disableSwipeToOpen={false}
         ModalProps={{
           keepMounted: true,
-          container: chatRef.current
+          container: chatRef.current,
         }}
       >
         <Settings closeSettings={() => setShowSetting(false)} />

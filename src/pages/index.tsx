@@ -5,7 +5,9 @@ function Home() {
   return (
     <Layout>
         {/* <Suspense fallback={<CircularProgress />}> */}
+        <div style={{height: '90vh'}}>
           <Chat />
+        </div>
         {/* </Suspense> */}
     </Layout>
   )
