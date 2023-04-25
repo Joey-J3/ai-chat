@@ -22,7 +22,8 @@ const nextConfig = {
         filename: 'static/chunks/remoteEntry.js',
         remotes: remotes(isServer),
         exposes: {
-          './chat': './src/chatgpt/components/Chat.tsx',
+          './chat': './src/remotes/remote-chat.tsx',
+          './sidebar': './src/remotes/remote-sidebar.tsx',
         },
         shared: {
           '@mui/icons-material': {
@@ -56,10 +57,10 @@ const nextConfig = {
       })
     );
 
-    // config.module.rules.push({
-    //   test: /\.svg$/,
-    //   use: ["@svgr/webpack"],
-    // }); // 针对 SVG 的处理规则
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ["@svgr/webpack"],
+    }); // 针对 SVG 的处理规则
 
     return config;
   },
