@@ -8,6 +8,9 @@ import {
   Select,
   MenuItem,
   TextField,
+  Fab,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
 import { Message, ROLES, useChatStore } from '../store';
 import chatStyle from './chat.module.scss';
@@ -47,16 +50,12 @@ export default function PromptToast(props: {
   return (
     <div className={chatStyle['prompt-toast']} key="prompt-toast">
       {props.showToast && (
-        <div
-          className={chatStyle['prompt-toast-inner'] + ' clickable'}
-          role="button"
-          onClick={() => props.setShowModal(true)}
-        >
-          <Psychology />
-          <span className={chatStyle['prompt-toast-content']}>{Locale.Context.Toast(isClient ? context.length : 0)}</span>
-        </div>
+        <Fab variant="extended" className={chatStyle['prompt-toast-inner']} onClick={() => props.setShowModal(true)}>
+          <Psychology sx={{ mr: 1 }} />
+          {Locale.Context.Toast(isClient ? context.length : 0)}
+        </Fab>
       )}
-      <Dialog open={props.showModal} onClose={() => props.setShowModal(false)}>
+      <Dialog open={props.showModal} onClose={() => props.setShowModal(false)} fullWidth={true} maxWidth="sm">
         <DialogTitle>{Locale.Context.Edit}</DialogTitle>
         <DialogContent>
           <>
@@ -124,16 +123,15 @@ export default function PromptToast(props: {
                   {Locale.Memory.Title} ({session.lastSummarizeIndex} of {session.messages.length})
                 </span>
 
-                <label className={chatStyle['memory-prompt-action']}>
-                  {Locale.Memory.Send}
-                  <input
-                    type="checkbox"
-                    checked={session.sendMemory}
-                    onChange={() =>
-                      chatStore.updateCurrentSession((session) => (session.sendMemory = !session.sendMemory))
-                    }
-                  ></input>
-                </label>
+                <FormControlLabel
+                  value="send"
+                  control={<Checkbox checked={session.sendMemory} onChange={() =>
+                    chatStore.updateCurrentSession((session) => (session.sendMemory = !session.sendMemory))
+                  } />}
+                  label={Locale.Memory.Send}
+                  labelPlacement="start"
+                  sx={{ '	.MuiFormControlLabel-label': { fontSize: '12px' }}}
+                />
               </div>
               <div className={chatStyle['memory-prompt-content']}>
                 {session.memoryPrompt || Locale.Memory.EmptyContent}

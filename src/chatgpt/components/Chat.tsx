@@ -28,15 +28,12 @@ import { Prompt, usePromptStore } from '../store/prompt';
 import { copyToClipboard, downloadAs, isMobileScreen, selectOrCopy, autoGrowTextArea } from '../utils';
 import { useScrollToBottom, useSubmitHandler } from '../hooks';
 
-// import { PromptHints } from './ui-lib';
 import Avatar from './Avatar';
-// import PromptToast from './PromptToast';
 import { ControllerPool } from '../requests';
 import Locale from '../locales';
 import styles from './home.module.scss';
 import { showModal } from './Modal';
 import { useIsClient, useVisibilityInClient } from '@/utils/hooks';
-import MouseOverPopover from '@/components/PopoverOnHover';
 import Settings from './Setting';
 
 const PromptToast = dynamic(async () => (await import('./PromptToast')).default, {
@@ -69,16 +66,16 @@ function exportMessages(messages: Message[], topic: string) {
       </div>
     ),
     actions: [
-      <MouseOverPopover content={Locale.Export.Copy} key={1}>
+      <Tooltip title={Locale.Export.Copy} key={1}>
         <IconButton color="inherit" aria-label="copy" onClick={() => copyToClipboard(mdText)}>
           <ContentCopyOutlined />
         </IconButton>
-      </MouseOverPopover>,
-      <MouseOverPopover content={Locale.Export.Download} key={2}>
+      </Tooltip>,
+      <Tooltip title={Locale.Export.Download} key={2}>
         <IconButton color="inherit" aria-label="download" onClick={() => downloadAs(mdText, filename)}>
           <Download />
         </IconButton>
-      </MouseOverPopover>,
+      </Tooltip>,
     ],
   });
 }
@@ -273,7 +270,7 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
 
   return (
     <div
-      className={clsx(styles.chat, theme.palette.mode === 'dark' ? ' bg-slate-800' : 'white')}
+      className={clsx(styles.chat, theme.palette.mode === 'dark' ? ' bg-slate-800' : 'bg-white')}
       ref={chatRef}
       key={session.id}
     >
@@ -296,21 +293,21 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
         </div>
         <div className={styles['window-actions']}>
           <div className={styles['window-action-button'] + ' ' + styles.mobile}>
-            <MouseOverPopover content={Locale.Chat.Actions.ChatList}>
+            <Tooltip title={Locale.Chat.Actions.ChatList}>
               <IconButton color="inherit" aria-label="return" onClick={props?.showSideBar}>
                 <KeyboardReturnOutlined />
               </IconButton>
-            </MouseOverPopover>
+            </Tooltip>
           </div>
           <div className={styles['window-action-button']}>
-            <MouseOverPopover content={Locale.Chat.Actions.CompressedHistory}>
+            <Tooltip title={Locale.Chat.Actions.CompressedHistory}>
               <IconButton color="inherit" aria-label="brain" onClick={() => setShowPromptModal(true)}>
                 <Psychology />
               </IconButton>
-            </MouseOverPopover>
+            </Tooltip>
           </div>
           <div className={styles['window-action-button']}>
-            <MouseOverPopover content={Locale.Chat.Actions.Export}>
+            <Tooltip title={Locale.Chat.Actions.Export}>
               <IconButton
                 color="inherit"
                 aria-label="brain"
@@ -323,7 +320,7 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
               >
                 <FileDownloadDoneRounded />
               </IconButton>
-            </MouseOverPopover>
+            </Tooltip>
           </div>
           <div className={styles['window-action-button']}>
             <Tooltip title={Locale.Settings.Title}>
@@ -450,7 +447,7 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
         <div className={styles['chat-input-panel-inner']}>
           <TextareaAutosize
             // ref={inputRef}
-            className={styles['chat-input']}
+            className={clsx(styles['chat-input'], ' focus:border-gray-300')}
             placeholder={Locale.Chat.Input(submitKey)}
             onInput={(e) => onInput(e.currentTarget.value)}
             value={userInput}
@@ -464,11 +461,11 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
             minRows={inputRows}
             maxRows={inputRows}
           />
-          <MouseOverPopover content={Locale.Chat.Send}>
-            <IconButton color="inherit" aria-label="send" onClick={onUserSubmit} className={styles['chat-input-send']}>
+          <Tooltip title={Locale.Chat.Send}>
+            <IconButton color="inherit" aria-label="send" onClick={onUserSubmit}>
               <SendRounded />
             </IconButton>
-          </MouseOverPopover>
+          </Tooltip>
         </div>
       </div>
 
