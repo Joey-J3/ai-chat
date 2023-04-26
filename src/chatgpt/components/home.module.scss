@@ -44,10 +44,10 @@
   width: var(--sidebar-width);
   box-sizing: border-box;
   padding: 20px;
-  background-color: var(--second);
   display: flex;
   flex-direction: column;
   box-shadow: inset -2px 0px 2px 0px rgb(0, 0, 0, 0.05);
+  height: 100%;
 }
 
 .window-content {
@@ -75,7 +75,7 @@
     position: absolute;
     left: -100%;
     z-index: 1000;
-    height: var(--full-height);
+    height: 100%;
     transition: all ease 0.3s;
     box-shadow: none;
   }
@@ -121,25 +121,15 @@
 
 .chat-item {
   padding: 10px 14px;
-  background-color: var(--white);
   border-radius: 10px;
   margin-bottom: 10px;
-  box-shadow: var(--card-shadow);
   transition: background-color 0.3s ease;
   cursor: pointer;
   user-select: none;
-  border: 2px solid transparent;
   position: relative;
   overflow: hidden;
 }
 
-.chat-item:hover {
-  background-color: var(--hover-color);
-}
-
-.chat-item-selected {
-  border-color: var(--primary);
-}
 
 .chat-item-title {
   font-size: 14px;
@@ -371,34 +361,18 @@
 .chat-input-panel-inner {
   display: flex;
   flex: 1;
+  justify-content: space-between;
 }
 
 .chat-input {
   height: 100%;
   width: 100%;
   border-radius: 10px;
-  border: var(--border-in-light);
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.03);
-  background-color: var(--white);
-  color: var(--black);
   font-family: inherit;
   padding: 10px 90px 10px 14px;
   resize: none;
   outline: none;
-}
-
-.chat-input:focus {
-  border: 1px solid var(--primary);
-}
-
-@media only screen and (max-width: 600px) {
-  .chat-input {
-    font-size: 16px;
-  }
-
-  .chat-input-send {
-    bottom: 30px;
-  }
 }
 
 .export-content {

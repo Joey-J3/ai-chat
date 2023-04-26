@@ -53,6 +53,12 @@ export const darkTheme: ThemeOptions = {
   },
   palette: {
     mode: 'dark',
+    primary: {
+      main: '#607d8b'
+    },
+    secondary: {
+      main: '#0a101d'
+    },
     text: {
       primary: 'rgba(148, 169, 201, 1)',
       secondary: 'rgba(148, 169, 201, 0.7)',
