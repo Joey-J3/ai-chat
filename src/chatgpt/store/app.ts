@@ -199,7 +199,9 @@ function createEmptySession(): ChatSession {
 interface ChatStore {
   config: ChatConfig;
   sessions: ChatSession[];
+  showSidebar: boolean;
   currentSessionIndex: number;
+  setShowSidebar: (visible: boolean) => void;
   clearSessions: () => void;
   removeSession: (index: number) => void;
   moveSession: (from: number, to: number) => void;
@@ -238,8 +240,15 @@ export const useChatStore = create<ChatStore>()(
     (set, get) => ({
       sessions: [createEmptySession()],
       currentSessionIndex: 0,
+      showSidebar: true,
       config: {
         ...DEFAULT_CONFIG,
+      },
+
+      setShowSidebar(visible: boolean) {
+        set(() => ({
+          showSidebar: visible
+        }))
       },
 
       clearSessions() {

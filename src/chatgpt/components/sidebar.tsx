@@ -1,40 +1,62 @@
 import clsx from 'clsx';
 import styles from './home.module.scss';
-import { Add, Close, GitHub } from '@mui/icons-material';
+import { Add, Close, DeleteForever, GitHub } from '@mui/icons-material';
 import { ChatList } from './chat-list';
 import { IconButton, Tooltip, Paper } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import ChatGptIcon from 'public/chatgpt.svg'
 import { REPO_URL } from '../constant';
 import { useChatStore } from '../store';
 import Locale from '../locales';
 
+const StyledPaper = styled(Paper)(({theme}) => ({
+  backgroundColor: theme.palette.secondary.main,
+  width: '300px',
+  [theme.breakpoints.down('sm')]: {
+    width: '100%'
+  },
+}))
+
+const CloseDiv = styled('div')(({theme}) => ({
+  display: 'block',
+  [theme.breakpoints.up('sm')]: {
+    display: 'none',
+  },
+}))
+
 export default function Sidebar() {
-  const [createNewSession, currentIndex, removeSession] = useChatStore((state) => [
+  const [createNewSession, currentIndex, removeSession, showSidebar, setShowSidebar] = useChatStore((state) => [
     state.newSession,
     state.currentSessionIndex,
     state.removeSession,
+    state.showSidebar,
+    state.setShowSidebar,
   ]);
   const chatStore = useChatStore();
-  const theme = useTheme();
   return (
-    <Paper
-      className={clsx(styles.sidebar, styles['sidebar-show'])}
-      sx={theme => ({ backgroundColor: theme.palette.secondary.main})}
+    <StyledPaper
+      className={clsx(styles.sidebar, showSidebar && styles['sidebar-show'])}
     >
       <div className={styles['sidebar-header']}>
-        <div className={styles['sidebar-title']}>ChatGPT Next</div>
-        <div className={styles['sidebar-sub-title']}>Build your own AI assistant.</div>
-        <div className={styles['sidebar-logo']}>
+        <div className={styles['sidebar-header-left']}>
+          <div className={styles['sidebar-title']}>ChatGPT Next</div>
+          <div className={styles['sidebar-sub-title']}>Build your own AI assistant.</div>
+        </div>
+
+        <div className={styles['sidebar-header-right']}>
           <ChatGptIcon />
+          <CloseDiv>
+            <IconButton aria-label='close' onClick={() => setShowSidebar(false)}>
+              <Close />
+            </IconButton>
+          </CloseDiv>
         </div>
       </div>
 
       <div
         className={styles['sidebar-body']}
         onClick={() => {
-          // setOpenSettings(false);
-          // setShowSideBar(false);
+          setShowSidebar(false);
         }}
       >
         <ChatList />
@@ -44,14 +66,13 @@ export default function Sidebar() {
         <div className={styles['sidebar-actions']}>
           <div className={styles['sidebar-action'] + ' ' + styles.mobile}>
             <IconButton onClick={chatStore.deleteSession}>
-              <Close />
+              <DeleteForever />
             </IconButton>
           </div>
           {/* <div className={styles["sidebar-action"]}>
               <IconButton
                 icon={<SettingsIcon />}
                 onClick={() => {
-                  setOpenSettings(true);
                   setShowSideBar(false);
                 }}
                 shadow
@@ -70,7 +91,7 @@ export default function Sidebar() {
             <IconButton
               onClick={() => {
                 createNewSession();
-                // setShowSideBar(false);
+                setShowSidebar(false);
               }}
             >
               <Add />
@@ -78,6 +99,6 @@ export default function Sidebar() {
           </Tooltip>
         </div>
       </div>
-    </Paper>
+    </StyledPaper>
   );
 }

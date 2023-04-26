@@ -2,7 +2,6 @@ import { useState, useRef, useEffect, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import { useDebouncedCallback } from 'use-debounce';
 import clsx from 'clsx';
-
 import {
   Box,
   CircularProgress,
@@ -23,6 +22,9 @@ import {
   Settings as SettingsIcon,
 } from '@mui/icons-material';
 
+import { useIsClient, useVisibilityInClient } from '@/utils/hooks';
+import { getDynamicOptions } from '@/remotes/utils';
+
 import { Message, useChatStore, BOT_HELLO, createMessage } from '../store';
 import { Prompt, usePromptStore } from '../store/prompt';
 import { copyToClipboard, downloadAs, isMobileScreen, selectOrCopy, autoGrowTextArea } from '../utils';
@@ -33,7 +35,6 @@ import { ControllerPool } from '../requests';
 import Locale from '../locales';
 import styles from './home.module.scss';
 import { showModal } from './Modal';
-import { useIsClient, useVisibilityInClient } from '@/utils/hooks';
 import Settings from './Setting';
 
 const PromptToast = dynamic(async () => (await import('./PromptToast')).default, {
@@ -43,8 +44,7 @@ const PromptToast = dynamic(async () => (await import('./PromptToast')).default,
 const PromptHints = dynamic(async () => (await import('./ui-lib')).PromptHints, {
   loading: () => <CircularProgress />,
 });
-
-const Markdown = dynamic<{ markdownInput: string }>(() => import('main/markdown'), { suspense: false });
+const Markdown = dynamic<{ markdownInput: string }>(() => import('main/markdown'), getDynamicOptions<{ markdownInput: string }>({ ssr: false }));
 
 function exportMessages(messages: Message[], topic: string) {
   const mdText =
@@ -80,12 +80,16 @@ function exportMessages(messages: Message[], topic: string) {
   });
 }
 
-export default function Chat(props: { showSideBar?: () => void; sideBarShowing?: boolean }) {
+export default function Chat() {
   type RenderMessage = Message & { preview?: boolean };
 
   const chatStore = useChatStore();
   const [session, sessionIndex] = useChatStore((state) => [state.currentSession(), state.currentSessionIndex]);
   const fontSize = useChatStore((state) => state.config.fontSize);
+  const [showSidebar, setShowSidebar] = useChatStore((state) => [
+    state.showSidebar,
+    state.setShowSidebar,
+  ])
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const chatRef = useRef<HTMLDivElement>(null);
@@ -263,7 +267,7 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
 
   // Auto focus
   useEffect(() => {
-    if (props.sideBarShowing && isMobileScreen()) return;
+    if (showSidebar && isMobileScreen()) return;
     inputRef.current?.focus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -294,7 +298,7 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
         <div className={styles['window-actions']}>
           <div className={styles['window-action-button'] + ' ' + styles.mobile}>
             <Tooltip title={Locale.Chat.Actions.ChatList}>
-              <IconButton color="inherit" aria-label="return" onClick={props?.showSideBar}>
+              <IconButton color="inherit" aria-label="return" onClick={() => setShowSidebar(true)}>
                 <KeyboardReturnOutlined />
               </IconButton>
             </Tooltip>
@@ -457,7 +461,7 @@ export default function Chat(props: { showSideBar?: () => void; sideBarShowing?:
               setAutoScroll(false);
               setTimeout(() => setPromptHints([]), 500);
             }}
-            autoFocus={!props?.sideBarShowing}
+            autoFocus={!showSidebar}
             minRows={inputRows}
             maxRows={inputRows}
           />

@@ -41,7 +41,6 @@
 
 .sidebar {
   top: 0;
-  width: var(--sidebar-width);
   box-sizing: border-box;
   padding: 20px;
   display: flex;
@@ -93,6 +92,11 @@
   position: relative;
   padding-top: 20px;
   padding-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+.sidebar-header-right {
+  display: flex;
 }
 
 .sidebar-logo {
