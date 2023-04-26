@@ -34,7 +34,7 @@ const nextConfig = {
             singleton: true,
             requiredVersion: false,
           },
-          'react-markdown/lib/react-markdown': {
+          'react-markdown': {
             singleton: true,
             requiredVersion: false,
           },
